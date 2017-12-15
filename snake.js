@@ -1,0 +1,4 @@
+
+const Snake = function(game) {
+  
+}
