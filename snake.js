@@ -59,7 +59,7 @@ Snake.prototype.render = function (game) {
   })
 }
 
-const tickSpeed = 30
+const tickSpeed = 10
 Snake.prototype.tick = function () {
   this.ticker += 1
   if (this.ticker >= tickSpeed) {

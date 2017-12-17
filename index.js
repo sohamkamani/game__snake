@@ -25,25 +25,24 @@ window.onload = function () {
     tile.anchor.setTo(0.5, 0.5)
     snake = new Snake(game, 15, 400, 40, tileSize)
     snake.render(game)
+    game.physics.arcade.enable(tile)
+    game.physics.arcade.enable(snake.head.sprite)
   }
 
   const update = () => {
     snake.move()
-    if(game.physics.arcade.collide(snake.head.sprite, tile)){
-      console.log('collide!!')
+    if (game.physics.arcade.collide(snake.head.sprite, tile)) {
+      tile.y = game.world.randomY
+      tile.x = game.world.randomX
       snake.addTile()
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-      tile.x -= speed
       snake.moveLeft()
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-      tile.x += speed
       snake.moveRight()
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
       snake.moveDown()
-      tile.y += speed
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-      tile.y -= speed
       snake.moveUp()
     }
     snake.render(game)
