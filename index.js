@@ -8,12 +8,10 @@ window.p2 = require('phaser-ce/build/custom/p2')
 window.Phaser = require('phaser-ce/build/custom/phaser-split')
 
 const speed = 4
+const tileSize = 44
 
 window.onload = function () {
   const Phaser = window.Phaser
-  //  Note that this html file is set to pull down Phaser 2.5.0 from the JS Delivr CDN.
-  //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
-  //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
   let tile, snake
   console.log(phaserImg)
@@ -25,30 +23,39 @@ window.onload = function () {
   function create () {
     tile = game.add.sprite(game.world.centerX, game.world.centerY, 'body_tile')
     tile.anchor.setTo(0.5, 0.5)
-    snake = new Snake(15, 400, 40, 60)
+    snake = new Snake(game, 15, 400, 40, tileSize)
     snake.render(game)
   }
 
-  const snakeSpeed = 65
   const update = () => {
+    snake.move()
+    if(game.physics.arcade.collide(snake.head.sprite, tile)){
+      console.log('collide!!')
+      snake.addTile()
+    }
     if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
       tile.x -= speed
-      snake.move(snakeSpeed, 0)
+      snake.moveLeft()
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
       tile.x += speed
-      snake.move(-snakeSpeed, 0)
+      snake.moveRight()
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-      snake.move(0, -snakeSpeed)
+      snake.moveDown()
       tile.y += speed
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
       tile.y -= speed
-      snake.move(0, snakeSpeed)
+      snake.moveUp()
     }
     snake.render(game)
   }
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+
+  const render = () => {
+    game.debug.pointer(game.input.pointer1)
+  }
+  var game = new Phaser.Game('100', '100', Phaser.AUTO, '', {
     preload,
     update,
-    create
+    create,
+    render
   })
 }
