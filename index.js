@@ -2,6 +2,7 @@ import phaserImg from './assets/phaser.png'
 import bodyTile from './assets/tile.png'
 
 const Snake = require('./snake')
+const Border = require('./border')
 
 window.PIXI = require('phaser-ce/build/custom/pixi')
 window.p2 = require('phaser-ce/build/custom/p2')
@@ -13,14 +14,14 @@ const tileSize = 44
 window.onload = function () {
   const Phaser = window.Phaser
 
-  let tile, snake
+  let tile, snake, border
   console.log(phaserImg)
-  function preload () {
+  const preload = () => {
     game.load.image('logo', './' + phaserImg)
     game.load.image('body_tile', `./${bodyTile}`)
   }
 
-  function create () {
+  const newGame = () => {
     tile = game.add.sprite(game.world.centerX, game.world.centerY, 'body_tile')
     tile.anchor.setTo(0.5, 0.5)
     snake = new Snake(game, 15, 400, 40, tileSize)
@@ -29,8 +30,21 @@ window.onload = function () {
     game.physics.arcade.enable(snake.head.sprite)
   }
 
+  const create = () => {
+    game.physics.startSystem(Phaser.Physics.ARCADE)
+    newGame()
+    border = new Border(0, 0, game.world.width, game.world.height, tileSize)
+    border.render(game)
+    game.physics.arcade.enable(border.group)
+  }
+
   const update = () => {
     snake.move()
+    if (game.physics.arcade.collide(snake.head.sprite, border.borders.top)) {
+      snake.reset()
+      snake.render(game)
+      game.physics.arcade.enable(snake.head.sprite)
+    }
     if (game.physics.arcade.collide(snake.head.sprite, tile)) {
       tile.y = game.world.randomY
       tile.x = game.world.randomX
@@ -51,7 +65,7 @@ window.onload = function () {
   const render = () => {
     game.debug.pointer(game.input.pointer1)
   }
-  var game = new Phaser.Game('100', '100', Phaser.AUTO, '', {
+  let game = new Phaser.Game('100', '100', Phaser.AUTO, '', {
     preload,
     update,
     create,

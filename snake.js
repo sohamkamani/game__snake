@@ -9,28 +9,52 @@ const directions = {
 }
 
 const getVelocity = (speed) => ({
-  0: { x: -speed, y: 0 },
-  1: { x: 0, y: -speed },
-  2: { x: speed, y: 0 },
-  3: { x: 0, y: speed }
+  0: {
+    x: -speed,
+    y: 0
+  },
+  1: {
+    x: 0,
+    y: -speed
+  },
+  2: {
+    x: speed,
+    y: 0
+  },
+  3: {
+    x: 0,
+    y: speed
+  }
 })
 
 const Snake = function (game, snakeLength, x, y, tileSize) {
+  this.init = {
+    x,
+    y,
+    snakeLength
+  }
   const spaceBetweenTiles = tileSize * spaceBetweenTilesRatio
   this.speed = (tileSize + spaceBetweenTiles) * scale
   this.velocity = getVelocity(this.speed)
-  this.tiles = []
   this.snake = game.add.group()
+  this.tileSpace = (tileSize + spaceBetweenTiles) * scale
+  this.reset()
+}
+
+Snake.prototype.reset = function () {
   this.ticker = 0
   this.direction = directions.R
-  this.tileSpace = (tileSize + spaceBetweenTiles) * scale
   this.head = {
-    x,
-    y,
+    x: this.init.x,
+    y: this.init.y,
     fresh: true
   }
+  if (this.tiles) {
+    this.tiles.forEach((tile) => this.snake.remove(tile.sprite))
+  }
+  this.tiles = []
   this.tiles.push(this.head)
-  for (let i = 0; i < snakeLength; i += 1) {
+  for (let i = 0; i < this.init.snakeLength; i += 1) {
     this.addTile()
   }
 }
